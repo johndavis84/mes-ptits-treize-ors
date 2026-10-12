@@ -1,0 +1,13 @@
+MES P'TITS TREIZE ORS — PACK PWA DE TEST
+
+Contenu : index.html, manifest.webmanifest, service-worker.js et icônes provisoires.
+
+IMPORTANT POUR LE SCANNER CAMÉRA
+- Le scanner caméra ne fonctionne pas en ouvrant directement index.html depuis les fichiers du téléphone.
+- Déployez le contenu du dossier sur un hébergement HTTPS, puis ouvrez l’adresse HTTPS dans Chrome (Android) ou Safari (iPhone).
+- Autorisez l’accès à la caméra lorsque le navigateur le demande. Une connexion Internet est nécessaire pour charger le lecteur ZXing au premier lancement.
+- Si le bouton ne démarre toujours pas, le message affiché dans le panneau indique le motif probable.
+- Le scan récupère le code dans le formulaire de l’article ; il ne synchronise pas automatiquement les données avec Mon Dépôt Vente.
+
+STATUT
+Ceci reste un prototype local. Le code JavaScript a été vérifié syntaxiquement, mais le scan doit encore être testé sur un vrai Android et un vrai iPhone. Ne pas utiliser pour enregistrer le stock réel sans tests et sauvegarde.
