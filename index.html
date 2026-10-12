@@ -487,6 +487,16 @@ renderCategories();expireReservations();renderProducts();loadAlertPreferences();
  const start=document.getElementById('startBarcodeScanner'),stop=document.getElementById('stopBarcodeScanner'),panel=document.getElementById('barcodeScannerPanel'),video=document.getElementById('barcodeScannerVideo'),status=document.getElementById('barcodeScannerStatus'),input=document.getElementById('productBarcode');
  if(!start||!stop||!panel||!video||!status||!input)return;
  let zxingControls=null,scriptPromise=null,starting=false;
+ function makeReader(lib){
+  try{
+   const hints=new Map();
+   if(lib.DecodeHintType&&lib.BarcodeFormat){
+    hints.set(lib.DecodeHintType.TRY_HARDER,true);
+    hints.set(lib.DecodeHintType.POSSIBLE_FORMATS,[lib.BarcodeFormat.CODE_128,lib.BarcodeFormat.CODE_39,lib.BarcodeFormat.ITF,lib.BarcodeFormat.EAN_13,lib.BarcodeFormat.EAN_8,lib.BarcodeFormat.UPC_A,lib.BarcodeFormat.UPC_E,lib.BarcodeFormat.CODABAR]);
+   }
+   return new lib.BrowserMultiFormatReader(hints,300);
+  }catch(e){return new lib.BrowserMultiFormatReader();}
+ }
  function say(message){status.textContent=message;}
  function loadZXing(){
   if(window.ZXingBrowser&&window.ZXingBrowser.BrowserMultiFormatReader)return Promise.resolve(window.ZXingBrowser);
@@ -512,13 +522,13 @@ renderCategories();expireReservations();renderProducts();loadAlertPreferences();
   try{
    const lib=await loadZXing();
    if(!starting)return;
-   const reader=new lib.BrowserMultiFormatReader();
+   const reader=makeReader(lib);
    say('Demande d’accès à la caméra… Autorise-la si le navigateur le demande.');
-   zxingControls=await reader.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}},video,(result,error,controls)=>{
+   zxingControls=await reader.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080},focusMode:{ideal:'continuous'}}},video,(result,error,controls)=>{
     if(controls&&!zxingControls)zxingControls=controls;
     if(result){const value=typeof result.getText==='function'?result.getText():result.text;acceptCode(value);}
    });
-   if(starting){starting=false;say('Caméra active. Place le code-barres bien à plat dans le cadre, avec une bonne lumière.');}
+   if(starting){starting=false;say('Caméra active. Rapproche le code pour que les barres remplissent une bonne partie de l’image. Garde le téléphone immobile, bien face à l’étiquette, avec une bonne lumière. Recherche du code en cours…');}
   }catch(err){stopScanner('Le scanner n’a pas pu démarrer. Vérifie HTTPS, l’autorisation caméra et la connexion Internet, puis réessaie. Détail : '+(err&&err.message?err.message:'erreur inconnue'));panel.hidden=false;}
  });
  stop.addEventListener('click',()=>stopScanner('Scanner arrêté.'));
